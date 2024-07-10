@@ -126,15 +126,9 @@ new class extends Component {
     </div>
     <hr class="dark:border-gray-700">
     <div class="flex items-center gap-2 py-3">
-        <div>
-            <x-svg.vm></x-svg.vm>
-        </div>
-        <x-primary-button class="my-2">Create VM</x-primary-button>
+        <x-primary-button class="mt-2 w-full"><x-svg.vm size="size-5 mr-2" />{{ 'Create VM' }}</x-primary-button>
     </div>
     <div class="flex items-center gap-2 py-3">
-        <div>
-            <x-svg.container></x-svg.container>
-        </div>
-        <x-primary-button class="my-2">Create Container</x-primary-button>
+        <x-primary-button class="mb-2 w-full"><x-svg.container size="size-5 mr-2" />Create Container</x-primary-button>
     </div>
 </div>

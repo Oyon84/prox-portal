@@ -113,4 +113,9 @@ class ProxmoxAuthService
 
         $pveNewUser->updateUser($userid, $data);
     }
+
+    public function startVM($data)
+    {
+        dd('here');
+    }
 }

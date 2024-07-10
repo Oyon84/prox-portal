@@ -2,7 +2,7 @@
     <td class="pl-6 py-2 whitespace-nowrap" colspan="1">
         <div class="flex">
             <div class="flex-shrink-0 h-10 w-10">
-                <div class="my-2">
+                <div class="my-2 text-gray-500">
                     @if (isset($svg))
                         {{ $svg }}
                     @endif
@@ -12,7 +12,7 @@
     </td>
     <td class="px-6 py-2 whitespace-nowrap" colspan="4">
         <div class="flex items-center">
-            <div class="text-lg font-bold">
+            <div class="text-lg text-gray-400 dark:text-gray-500 font-bold">
                 {{ $slot }}
             </div>
         </div>

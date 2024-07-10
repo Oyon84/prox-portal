@@ -6,17 +6,21 @@ use Illuminate\Support\Arr;
 
 new class extends Component 
 {    
+    protected $proxmox;
+    
     public $allVms = [];
 
     public $allLxcs = [];
 
     public function mount(ProxmoxAuthService $proxmox)
     {        
-        $this->node = $proxmox->authenticate(Auth::user()->pveUsername,'Nortel01','pve');
+        $this->proxmox = $proxmox;
 
-        $this->allVms = $this->getAllVms($proxmox);
+        $this->proxmox->authenticate(Auth::user()->pveUsername,'Nortel01','pve');
 
-        $this->allLxcs = $this->getAllLxcs($proxmox);
+        $this->allVms = $this->getAllVms($this->proxmox);
+
+        $this->allLxcs = $this->getAllLxcs($this->proxmox);
     }
 
     public function setUptime($seconds)
@@ -40,6 +44,7 @@ new class extends Component
         foreach ($nodes->data as $key => $node) {
             $vms = $proxmoxAuthInstance->request('/nodes/' . $node->node . '/qemu/', ['full' => true]);
             foreach ($vms->data as $key => $vm) {
+                $vm->node = $node->node;
                 array_push($this->allVms, $vm);
             }
         }
@@ -54,6 +59,7 @@ new class extends Component
         foreach ($nodes->data as $key => $node) {
             $lxcs = $proxmoxAuthInstance->request('/nodes/' . $node->node . '/lxc/');
             foreach ($lxcs->data as $key => $lxc) {
+                $lxc->node = $node->node;
                 $interfaces = $proxmoxAuthInstance->request('/nodes/' . $node->node . '/lxc/' . $lxc->vmid . '/interfaces/')->data;
                 foreach($interfaces as $interface)
                 {
@@ -72,6 +78,31 @@ new class extends Component
         
         return collect($this->allLxcs)->sortBy('name');
     }
+
+    public function startInstance($vmid, $node, $type)
+    {
+        //Node
+        //Type LXC or QEMU
+        //VMID
+
+        $data = [
+            'vmid' => $vmid,
+            'node' => $node,
+            'type' => $type,
+        ];
+
+        dd('here');
+
+        //$this->proxmox->authenticate('root', 'Nortel01', 'pve');
+
+        //$vm = $this->proxmox->startVM($data);
+        
+    }
+
+    public function stopInstance($vmid, $node, $type)
+    {
+        dd($vmid);
+    }
 }; ?>
 
 <div class="h-full">
@@ -79,15 +110,7 @@ new class extends Component
         <x-partials.header headerText="Dashboard" svg="dashboard"></x-partials.header>
     </x-slot>
 
-    <div class="mx-5 h-full lg:grid lg:grid-cols-3 xl:grid-cols-5 gap-8 sm:px-6 lg:px-8 grid-flow-row-dense">
-        <div class="h-full pt-6 lg:col-span-2 xl:col-span-4">
-            <div class="h-full mx-auto">
-                <x-partials.resource-explorer 
-                :vmData="$allVms" 
-                :lxcData="$allLxcs" 
-                />
-            </div>
-        </div>
+    <div class="mx-5 h-full lg:grid lg:grid-cols-3 xl:grid-cols-5 gap-8 grid-flow-row-dense">
         <div class="pt-6">
             <div class="max-w-7xl mx-auto">
                 <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
@@ -112,6 +135,14 @@ new class extends Component
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+        <div class="h-full pt-6 lg:col-span-2 xl:col-span-4">
+            <div class="h-full mx-auto">
+                <x-partials.resource-explorer 
+                :vmData="$allVms" 
+                :lxcData="$allLxcs" 
+                />
             </div>
         </div>
     </div>

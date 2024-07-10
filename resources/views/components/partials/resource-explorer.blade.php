@@ -48,7 +48,10 @@
                                     detailsSub="{{ $vm->status == 'stopped' ? 'N/A' : $this->setUptime($vm->uptime) }}"
                                     status="{{ ucfirst($vm->status) }}"
                                     ip="172.16.5.4"
-                                    favorite="{{ (bool)rand(0,1) }}">    
+                                    favorite="{{ (bool)rand(0,1) }}"
+                                    vmid="{{ $vm->vmid }}"
+                                    node="{{ $vm->node }}"
+                                    type="{{ 'vm' }}">    
                                     <x-slot name="svg">
                                         <x-svg.vm size="size-5"></x-svg.vm>
                                     </x-slot>
@@ -62,7 +65,7 @@
                         <x-slot name="svg">
                             <x-svg.container></x-svg.container>
                         </x-slot-svg>
-                        Containers
+                        LXC Containers
                     </x-resource-table.resource-type-row>
                     {{-- Container Loop --}}
                     @foreach ($lxcData as $key => $lxc)
@@ -73,7 +76,10 @@
                             detailsSub="{{ $lxc->status == 'stopped' ? 'N/A' : $this->setUptime($lxc->uptime) }}"
                             status="{{ ucfirst($lxc->status) }}"
                             ip="{{ $lxc->ip }}"
-                            favorite="{{ (bool)rand(0,1) }}">    
+                            favorite="{{ (bool)rand(0,1) }}"
+                            vmid="{{ $lxc->vmid }}"
+                            node="{{ $lxc->node }}"
+                            type="{{ 'lxc' }}">    
                             <x-slot name="svg">
                                 <x-svg.container size="size-5"></x-svg.container>
                             </x-slot>
@@ -87,7 +93,10 @@
                             detailsSub="{{ $lxc->status == 'stopped' ? 'N/A' : $this->setUptime($lxc->uptime) }}"
                             status="{{ ucfirst($lxc->status) }}"
                             ip="{{ $lxc->ip }}"
-                            favorite="{{ (bool)rand(0,1) }}">    
+                            favorite="{{ (bool)rand(0,1) }}"
+                            vmid="{{ $lxc->vmid }}"
+                            node="{{ $lxc->node }}"
+                            type="{{ 'lxc' }}">    
                             <x-slot name="svg">
                                 <x-svg.container size="size-5"></x-svg.container>
                             </x-slot>
