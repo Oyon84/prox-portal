@@ -16,6 +16,7 @@
     </head>
     @auth
         @dump('authed')
+        @dump(session()->has('PVE_Authenticated'))
         <body class="font-sans antialiased">
             <div class="h-screen overflow-hidden bg-gray-100 dark:bg-gray-900">
                 <livewire:layout.navigation />
@@ -23,7 +24,7 @@
                 @if (isset($header))
                     <header class="bg-white dark:bg-gray-800 shadow">
                         <div class="mx-5 py-6 sm:px-6 lg:px-8">
-                            {{ $header }}
+                            {{ $header }}   
                         </div>
                     </header>
                 @endif
@@ -39,6 +40,7 @@
 
     @guest
         @dump('Not authed')
+        @dump(session()->has('PVE_Authenticated'))
         <body class="font-sans text-gray-900 antialiased">
             <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100 dark:bg-gray-900">
                 <div>

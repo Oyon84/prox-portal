@@ -19,7 +19,7 @@ class ProxmoxServiceProvider extends ServiceProvider
             return new ProxmoxAuthService(
                 'root',
                 'Nortel01',
-                'pam',
+                'pve',
             );
         });
     }

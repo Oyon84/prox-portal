@@ -4,7 +4,7 @@ namespace App\Services;
 
 use Proxmox\Access;
 use proxmox\Cluster;
-use proxmox\Nodes;
+use Proxmox\Nodes;
 use proxmox\Pools;
 use Proxmox\ProxmoxException;
 use Proxmox\Request;
@@ -33,11 +33,11 @@ class ProxmoxAuthService
         Request::Login($this->credentials);
     }
 
-    public function authenticate($username, $password, $realm = 'pam')
+    public function authenticate($username, $password, $realm = 'pam') : void
     {
         if (isset($this->credentials)) {
             $this->credentials = [
-                'hostname' => '172.16.1.204',
+                'hostname' => config('proxmox.server.hostname'),
                 'username' => $username,
                 'password' => $password,
                 'realm'    => $realm,
@@ -46,11 +46,8 @@ class ProxmoxAuthService
         
         Request::Login($this->credentials);
 
-        $pve_access = new Access;
+        Session::put('PVE_Authenticated', true);
 
-        $pve_user = $pve_access->getUser($username . '@' . $realm);
-
-        return $pve_user;
     }
 
     public function request($path)
@@ -114,8 +111,29 @@ class ProxmoxAuthService
         $pveNewUser->updateUser($userid, $data);
     }
 
-    public function startVM($data)
+    public function startVM($data): void
     {
-        dd('here');
+        $node = $data['node'];
+        $vmid = $data['vmid'];
+
+        $proxmox = new Nodes;
+
+        $instance = $proxmox->qemuStart($node, $vmid);
+
+        return;
+
+    }
+
+    public function stopVM($data): void
+    {
+        $node = $data['node'];
+        $vmid = $data['vmid'];
+
+        $proxmox = new Nodes;
+
+        $instance = $proxmox->qemuStop($node, $vmid);
+
+        return;
+
     }
 }

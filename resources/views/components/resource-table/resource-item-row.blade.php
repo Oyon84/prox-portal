@@ -53,7 +53,7 @@
         @if ($status == 'Stopped' && $type != null)
             <a href="#" wire:click.prevent="startInstance({{ $vmid }}, '{{ $node}}', '{{ $type }}')" class="text-green-600 hover:text-green-900"><x-svg.play /></a>
         @elseif ($status == 'Running' && $type != null)
-            <a href="#" wire:click.prevent="stopInstance({{ $vmid }})" class="text-red-400 hover:text-red-800"><x-svg.stop /></a>
+            <a href="#" wire:click.prevent="stopInstance({{ $vmid }}, '{{ $node}}', '{{ $type }}')" class="text-red-400 hover:text-red-800"><x-svg.stop /></a>
         @endif
     </td>
     <td class="px-6 py-2 whitespace-nowrap text-sm text-gray-500">

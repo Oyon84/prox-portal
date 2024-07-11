@@ -7,20 +7,71 @@ use Illuminate\Support\Arr;
 new class extends Component 
 {    
     protected $proxmox;
+
+    public $nodes;
     
     public $allVms = [];
 
     public $allLxcs = [];
 
+    // Dependency injection via mount method
     public function mount(ProxmoxAuthService $proxmox)
-    {        
+    {
+        $this->initializeProxmox($proxmox);
+    }
+
+    protected function initializeProxmox(ProxmoxAuthService $proxmox)
+    {
         $this->proxmox = $proxmox;
 
-        $this->proxmox->authenticate(Auth::user()->pveUsername,'Nortel01','pve');
+        // Authenticate the Proxmox service
+        $this->proxmox->authenticate(Auth::user()->pveUsername, 'Nortel01', 'pve');
 
-        $this->allVms = $this->getAllVms($this->proxmox);
+        // Reset data to avoid duplication
+        $this->nodes = [];
+        $this->allVms = [];
+        $this->allLxcs = [];
+        
+        // Fetch Nodes data
+        $this->nodes = $this->getNodes();
 
-        $this->allLxcs = $this->getAllLxcs($this->proxmox);
+        // Fetch VM and LXC data
+        $this->allVms = $this->getAllVms();
+        $this->allLxcs = $this->getAllLxcs();
+    }
+
+    protected function ensureProxmoxInitialized()
+    {
+        if (is_null($this->proxmox)) {
+            // Reinitialize if needed
+            $this->initializeProxmox(app(ProxmoxAuthService::class));
+        }
+    }
+
+    public function refresh()
+    {
+        $this->initializeProxmox(app(ProxmoxAuthService::class));
+    }
+
+    // Ensure $proxmox is not null before use
+    public function startInstance($vmid, $node, $type)
+    {                
+        $this->ensureProxmoxInitialized();
+        $this->proxmox->startVM([
+            'vmid' => $vmid,
+            'node' => $node,
+            'type' => $type,
+        ]);
+    }
+
+    public function stopInstance($vmid, $node, $type)
+    {
+        $this->ensureProxmoxInitialized();
+        $this->proxmox->stopVM([
+            'vmid' => $vmid,
+            'node' => $node,
+            'type' => $type,
+        ]);
     }
 
     public function setUptime($seconds)
@@ -32,77 +83,44 @@ new class extends Component
         return $hours > 0 ? "$hours hours, $minutes minutes" : ($minutes > 0 ? "$minutes minutes, $seconds seconds" : "$seconds seconds");
     }
 
-    public function getNodes($proxmoxAuthInstance)
-    {
-        return $proxmoxAuthInstance->request('/nodes');
+    public function getNodes()
+    {        
+        return $this->proxmox->request('/nodes');
     }
 
-    public function getAllVms($proxmoxAuthInstance)
-    {
-        $nodes = $this->getNodes($proxmoxAuthInstance);
-
-        foreach ($nodes->data as $key => $node) {
-            $vms = $proxmoxAuthInstance->request('/nodes/' . $node->node . '/qemu/', ['full' => true]);
-            foreach ($vms->data as $key => $vm) {
+    public function getAllVms()
+    {        
+        foreach ($this->nodes->data as $node) {
+            $vms = $this->proxmox->request('/nodes/' . $node->node . '/qemu/', ['full' => true]);
+            foreach ($vms->data as $vm) {
                 $vm->node = $node->node;
-                array_push($this->allVms, $vm);
+                $this->allVms[] = $vm;
             }
         }
         
         return collect($this->allVms)->sortBy('name');
     }
 
-    public function getAllLxcs($proxmoxAuthInstance)
+    public function getAllLxcs()
     {
-        $nodes = $this->getNodes($proxmoxAuthInstance);
-
-        foreach ($nodes->data as $key => $node) {
-            $lxcs = $proxmoxAuthInstance->request('/nodes/' . $node->node . '/lxc/');
-            foreach ($lxcs->data as $key => $lxc) {
+        foreach ($this->nodes->data as $node) {
+            $lxcs = $this->proxmox->request('/nodes/' . $node->node . '/lxc/');
+            foreach ($lxcs->data as $lxc) {
                 $lxc->node = $node->node;
-                $interfaces = $proxmoxAuthInstance->request('/nodes/' . $node->node . '/lxc/' . $lxc->vmid . '/interfaces/')->data;
-                foreach($interfaces as $interface)
-                {
-                    if ($interface->name == 'eth0')
-                    {
+                $interfaces = $this->proxmox->request('/nodes/' . $node->node . '/lxc/' . $lxc->vmid . '/interfaces/')->data;
+                foreach ($interfaces as $interface) {
+                    if ($interface->name == 'eth0') {
                         $lxc->interface = $interface->name;
                         $lxc->ip = $interface->inet;
                     }
                 }
-                
-                array_push($this->allLxcs, $lxc);
+                $this->allLxcs[] = $lxc;
             }
         }
 
-        //dump($this->allLxcs);
-        
         return collect($this->allLxcs)->sortBy('name');
     }
 
-    public function startInstance($vmid, $node, $type)
-    {
-        //Node
-        //Type LXC or QEMU
-        //VMID
-
-        $data = [
-            'vmid' => $vmid,
-            'node' => $node,
-            'type' => $type,
-        ];
-
-        dd('here');
-
-        //$this->proxmox->authenticate('root', 'Nortel01', 'pve');
-
-        //$vm = $this->proxmox->startVM($data);
-        
-    }
-
-    public function stopInstance($vmid, $node, $type)
-    {
-        dd($vmid);
-    }
 }; ?>
 
 <div class="h-full">
@@ -138,7 +156,7 @@ new class extends Component
             </div>
         </div>
         <div class="h-full pt-6 lg:col-span-2 xl:col-span-4">
-            <div class="h-full mx-auto">
+            <div wire:poll.5000ms='refresh' class="h-full mx-auto">
                 <x-partials.resource-explorer 
                 :vmData="$allVms" 
                 :lxcData="$allLxcs" 
