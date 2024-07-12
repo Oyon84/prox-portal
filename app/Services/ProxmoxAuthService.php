@@ -129,9 +129,35 @@ class ProxmoxAuthService
         $node = $data['node'];
         $vmid = $data['vmid'];
 
-        $proxmox = new Nodes;
+        $proxmox = new Nodes;   
 
         $instance = $proxmox->qemuStop($node, $vmid);
+
+        return;
+
+    }
+
+    public function startLXC($data): void
+    {
+        $node = $data['node'];
+        $vmid = $data['vmid'];
+
+        $proxmox = new Nodes;
+
+        $instance = $proxmox->lxcStart($node, $vmid);
+
+        return;
+
+    }
+
+    public function stopLXC($data): void
+    {
+        $node = $data['node'];
+        $vmid = $data['vmid'];
+
+        $proxmox = new Nodes;
+
+        $instance = $proxmox->lxcShutdown($node, $vmid);
 
         return;
 
