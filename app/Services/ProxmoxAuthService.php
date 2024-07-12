@@ -131,7 +131,20 @@ class ProxmoxAuthService
 
         $proxmox = new Nodes;   
 
-        $instance = $proxmox->qemuStop($node, $vmid);
+        $instance = $proxmox->qemuStop($node, $vmid, array(['overrule-shutdown' => true]));
+
+        return;
+
+    }
+
+    public function shutdownVM($data): void
+    {
+        $node = $data['node'];
+        $vmid = $data['vmid'];
+
+        $proxmox = new Nodes;   
+
+        $instance = $proxmox->qemuShutdown($node, $vmid);
 
         return;
 
@@ -151,6 +164,19 @@ class ProxmoxAuthService
     }
 
     public function stopLXC($data): void
+    {
+        $node = $data['node'];
+        $vmid = $data['vmid'];
+
+        $proxmox = new Nodes;
+
+        $instance = $proxmox->lxcStop($node, $vmid);
+
+        return;
+
+    }
+
+    public function shutdownLXC($data): void
     {
         $node = $data['node'];
         $vmid = $data['vmid'];
