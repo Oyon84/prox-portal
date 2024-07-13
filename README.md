@@ -25,10 +25,10 @@ In the first phase I aim to complete a dashboard solution before working on depl
 - Enable PVE user account when Laravel account is verified by email.
 - Checking for duplicate PVE username during registration.
 - Dashboard display resources based on permissions in PVE.
+- Create stop start functionality for resources on the dashboard.
 
 ## Features working on currently
 
-- Create stop start functionality for resources on the dashboard.
 - Create views to show details about assets.
 - Create a redirect if a new user is not member of a resource pool.
 - Create landing page stating to either create a resource pool, or request a resource pool admin to add you.
