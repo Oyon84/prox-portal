@@ -170,7 +170,7 @@ class ProxmoxAuthService
 
         $proxmox = new Nodes;
 
-        $instance = $proxmox->lxcStop($node, $vmid);
+        $instance = $proxmox->lxcStop($node, $vmid, array(['overrule-shutdown' => true]));
 
         return;
 

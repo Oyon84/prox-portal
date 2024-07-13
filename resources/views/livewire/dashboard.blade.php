@@ -78,15 +78,16 @@ new class extends Component
         }
     }
 
-    public function openModal($name, $vmid, $node, $type)
+    public function openModal($modalName, $vmid, $node, $type, $name)
     {
         $this->instanceData = [
             'vmid' => $vmid,
             'node' => $node,
             'type' => $type,
+            'name' => $name,
         ];
         
-        $this->dispatch('open-modal', $name);
+        $this->dispatch('open-modal', $modalName);
     }
 
     public function stopInstance($name, $vmid, $node, $type)
@@ -239,26 +240,41 @@ new class extends Component
                 @endphp
                 <div class="flex justify-between items-center bg-brand-dark dark:bg-brand-light shadow-md p-6">
                     <div>
-                        <p class="text-gray-100 dark:text-gray-700">Instance details</p>
+                        <p class="text-gray-100 dark:text-gray-800">Instance details</p>
                         <p class="text-gray-300 dark:text-gray-500 text-xs">VMID: {{ $vmid }}</p>
                         <p class="text-gray-300 dark:text-gray-500 text-xs">Node: {{ $node }}</p>
                         <p class="text-gray-300 dark:text-gray-500 text-xs">Type: {{ $type }}</p>
                     </div>
-                    <div>
-                        @switch($type)
-                            @case('vm')
-                                <x-svg.vm size="size-16 text-gray-300 dark:text-gray-700"/>
-                                @break
-                            @case('lxc')
-                                <x-svg.container size="size-16 text-gray-300 dark:text-gray-700"/>
-                                @break
-                            @default
-                                <x-svg.chip size="size-16 text-gray-300 dark:text-gray-700"/>
-                        @endswitch
-                        
-                    </div>
+                    <x-modals.partials.headerNameSvg
+                        name="{{$name}}"
+                        vmid="{{$vmid}}"
+                        node="{{$node}}"
+                        type="{{$type}}" />
                 </div>
                 <x-modals.stopInstanceModal vmid="{{$vmid}}" node="{{$node}}" type="{{$type}}"/>
+            @endisset
+        </x-modal>
+        <x-modal name="instanceDetails" :show="$errors->isNotEmpty()" focusable >
+            @isset($this->instanceData['vmid'])
+                @php
+                    extract($this->instanceData);
+                @endphp
+                <div class="flex justify-between items-center bg-brand-dark dark:bg-brand-light shadow-md dark:shadow-gray-700 p-6">
+                    <div>
+                        <p class="text-gray-100 dark:text-gray-800">Instance details</p>
+                        <p class="text-gray-400 dark:text-gray-500 text-xs">VMID: {{ $vmid }}</p>
+                        <p class="text-gray-400 dark:text-gray-500 text-xs">Node: {{ $node }}</p>
+                        <p class="text-gray-400 dark:text-gray-500 text-xs">Type: {{ $type }}</p>
+                    </div>
+                    <div>
+                        <x-modals.partials.headerNameSvg
+                        name="{{$name}}"
+                        vmid="{{$vmid}}"
+                        node="{{$node}}"
+                        type="{{$type}}" /> 
+                    </div>
+                </div>
+                <x-modals.instanceDetailsModal vmid="{{$vmid}}" node="{{$node}}" type="{{$type}}"/>
             @endisset
         </x-modal>
     </div>

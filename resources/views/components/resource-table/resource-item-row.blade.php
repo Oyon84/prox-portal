@@ -16,12 +16,16 @@
         'vmid' => $vmid,
         'node' => $node,
         'type' => $type,
-    ]
+];
+
+    $openDetails = $vmid . 'details';
+
+    $openDetails = strVal($openDetails);
 
 @endphp
 
 <tr class="group">
-    <td class="pl-7 py-1 whitespace-nowrap">
+    <td class="group-hover:bg-gray-100 dark:group-hover:bg-gray-900 rounded-l-xl pl-7 py-1 whitespace-nowrap">
         <div class="group-hover:hidden items-center h-10 w-10">
             {{ $svg }}
         </div>
@@ -30,11 +34,11 @@
                 <x-svg.edit size="size-5 text-gray-500" />
             </a>        </div>
     </td>
-    <td class="px-6 py-2 whitespace-nowrap">
+    <td class="group-hover:bg-gray-100 dark:group-hover:bg-gray-900 rounded-r-xl px-6 py-2 whitespace-nowrap" wire:click.prevent="openModal('instanceDetails', '{{ $vmid }}', '{{ $node}}', '{{ $type }}', '{{ $name }}')">
         <a href=""><div class="flex items-center">
             <div>
                 <div class="text-sm font-medium text-gray-900 dark:text-gray-200 group-hover:text-gray-600 dark:group-hover:text-gray-400">
-                    {{ $name }}
+                    {{ $name }} <p class="inline-flex ml-3 text-xs font-bold text-red-500">[unmanaged]</p>
                 </div>
                 <div class="text-xs text-gray-500">
                     {{ $nameSub }}
@@ -51,9 +55,9 @@
             {{ $status }}
         </span>
         @if ($status == 'Stopped' && $type != null)
-            <a href="#" wire:click.prevent="startInstance({{ $vmid }}, '{{ $node}}', '{{ $type }}')" class="text-green-600 hover:text-green-900"><x-svg.play /></a>
+            <a href="#" wire:click.prevent="startInstance({{ $vmid }}, '{{ $node}}', '{{ $type }}', '{{ $name }}')" class="text-green-600 hover:text-green-900"><x-svg.play /></a>
         @elseif ($status == 'Running' && $type != null)
-            <a href="#" wire:click.prevent="openModal('confirmStopInstance', '{{ $vmid }}', '{{ $node}}', '{{ $type }}')" class="text-red-400 hover:text-red-800"><x-svg.stop /></a>
+            <a href="#" wire:click.prevent="openModal('confirmStopInstance', '{{ $vmid }}', '{{ $node}}', '{{ $type }}', '{{ $name }}')" class="text-red-400 hover:text-red-800"><x-svg.stop /></a>
         @endif
     </td>
     <td class="px-6 py-2 whitespace-nowrap text-sm text-gray-500">

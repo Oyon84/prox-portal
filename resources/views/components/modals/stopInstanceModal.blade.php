@@ -1,6 +1,6 @@
 <div class="p-6">
     
-    <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-5">
+    <h2 class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-5">
         {{ __('Are you sure you want stop ' . $this->instanceData['type'] . ' ' . $this->instanceData['vmid']) }}
     </h2>
     <div class="flex">
@@ -29,7 +29,7 @@
 
         <x-input-error :messages="$errors->get('password')" class="mt-2" />
     </div> --}}
-
+    
     <div class="mt-8 flex gap-3 justify-between">
         <div>
             <x-secondary-button class="mr-3" x-on:click="$dispatch('close')">
