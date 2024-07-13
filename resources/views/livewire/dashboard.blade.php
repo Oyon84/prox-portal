@@ -232,13 +232,33 @@ new class extends Component
                 />
             </div>
         </div>
-        <x-modal name="confirmStopInstance" :show="$errors->isNotEmpty()" focusable>
+        <x-modal name="confirmStopInstance" maxWidth='lg' :show="$errors->isNotEmpty()" focusable>
             @isset($this->instanceData['vmid'])
                 @php
                     extract($this->instanceData);
                 @endphp
-                @dump($this->instanceData['vmid'], $this->instanceData['node'], $this->instanceData['type'])
-                    <x-modals.stopInstanceModal vmid="{{$vmid}}" node="{{$node}}" type="{{$type}}"/>
+                <div class="flex justify-between items-center bg-brand-dark dark:bg-brand-light shadow-md p-6">
+                    <div>
+                        <p class="text-gray-100 dark:text-gray-700">Instance details</p>
+                        <p class="text-gray-300 dark:text-gray-500 text-xs">VMID: {{ $vmid }}</p>
+                        <p class="text-gray-300 dark:text-gray-500 text-xs">Node: {{ $node }}</p>
+                        <p class="text-gray-300 dark:text-gray-500 text-xs">Type: {{ $type }}</p>
+                    </div>
+                    <div>
+                        @switch($type)
+                            @case('vm')
+                                <x-svg.vm size="size-16 text-gray-300 dark:text-gray-700"/>
+                                @break
+                            @case('lxc')
+                                <x-svg.container size="size-16 text-gray-300 dark:text-gray-700"/>
+                                @break
+                            @default
+                                <x-svg.chip size="size-16 text-gray-300 dark:text-gray-700"/>
+                        @endswitch
+                        
+                    </div>
+                </div>
+                <x-modals.stopInstanceModal vmid="{{$vmid}}" node="{{$node}}" type="{{$type}}"/>
             @endisset
         </x-modal>
     </div>

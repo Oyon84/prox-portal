@@ -30,17 +30,20 @@
         <x-input-error :messages="$errors->get('password')" class="mt-2" />
     </div> --}}
 
-    <div class="mt-6 flex gap-3 justify-start">
-        <x-secondary-button x-on:click="$dispatch('close')">
-            {{ __('Cancel') }}
-        </x-secondary-button>
-
-        <x-primary-button wire:click="shutdownInstance('confirmStopInstance', '{{ $vmid }}', '{{ $node}}', '{{ $type }}')">
-            {{ __('Shutdown') }}
-        </x-primary-button>
-
-        <x-danger-button wire:click="stopInstance('confirmStopInstance', '{{ $vmid }}', '{{ $node}}', '{{ $type }}')">
-            {{ __('Stop') }}
-        </x-danger-button>
+    <div class="mt-8 flex gap-3 justify-between">
+        <div>
+            <x-secondary-button class="mr-3" x-on:click="$dispatch('close')">
+                {{ __('Cancel') }}
+            </x-secondary-button>
+    
+            <x-primary-button wire:click="shutdownInstance('confirmStopInstance', '{{ $vmid }}', '{{ $node}}', '{{ $type }}')">
+                {{ __('Shutdown') }}
+            </x-primary-button>
+        </div>
+        <div>
+            <x-danger-button wire:click="stopInstance('confirmStopInstance', '{{ $vmid }}', '{{ $node}}', '{{ $type }}')">
+                {{ __('Stop') }}
+            </x-danger-button>
+        </div>
     </div>
 </div>

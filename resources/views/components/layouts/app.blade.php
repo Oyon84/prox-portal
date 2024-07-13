@@ -15,8 +15,8 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     @auth
-        @dump('authed')
-        @dump(session()->has('PVE_Authenticated'))
+        {{-- @dump('authed')
+        @dump(session()->has('PVE_Authenticated')) --}}
         <body class="font-sans antialiased">
             <div class="h-screen overflow-hidden bg-gray-100 dark:bg-gray-900">
                 <livewire:layout.navigation />
