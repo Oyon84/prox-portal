@@ -29,12 +29,14 @@ In the first phase I aim to complete a dashboard solution before working on depl
 - Dashboard display resources based on permissions in PVE.
 - Create stop start functionality for resources on the dashboard.
 - Artisan command nodes:update to import cluster nodes into the database.
+- Light and Dark mode based on browser setting.
 
 ## Features working on currently
 
 - Create views to show details about assets.
 - Create a redirect if a new user is not member of a resource pool.
 - Create landing page stating to either create a resource pool, or request a resource pool admin to add you.
+- Light and Dark mode by toggle.
 
 ## Import nodes into database
 
