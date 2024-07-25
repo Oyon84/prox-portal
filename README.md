@@ -38,11 +38,13 @@ In the first phase I aim to complete a dashboard solution before working on depl
 
 ## Import nodes into database
 
-Before you can start to use prox portal you need to import nodes into the database. This can be done on the console of your webserver hosting the laravel application. 
+Prox Portal lets you choose which hosts you want to use with prox portal. To import nodes into the prox portal database run the following command from the console.
 
 ```
 php artisan nodes:update
 ```
+
+Per node you can decide to import or not, nodes imported are available for placement of resources.
 
 ## Security Vulnerabilities
 
