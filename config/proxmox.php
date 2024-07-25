@@ -28,8 +28,8 @@ foreach ($hosts as $host) {
 return [
     'server' => [
         'hostname' => $workingHost,
-        'username' => getenv('PROXMOX_USER'),
-        'password' => getenv('PROXMOX_PASS'),
+        'username' => getenv('PROXMOX_USERNAME'), 
+        'password' => getenv('PROXMOX_PASSWORD'),
         // sensible defaults for these two
         'realm' => getenv('PROXMOX_REALM') ?: 'pam',
         'port' => getenv('PROXMOX_PORT') ?: 8006,

@@ -44,9 +44,10 @@
         <body class="font-sans text-gray-900 antialiased">
             <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100 dark:bg-gray-900">
                 <div>
-                    <a href="/" wire:navigate>
+                    <a class="flex mb-5 justify-center" href="/" wire:navigate>
                         <x-application-logo-large class="w-20 h-20 fill-current text-gray-500" />
                     </a>
+                    <x-partials.guest-branding />
                 </div>
 
                 @if (session()->has('failed'))
@@ -72,6 +73,7 @@
                 <div class="w-full sm:max-w-md mt-6 px-6 py-4 bg-white dark:bg-gray-800 shadow-md overflow-hidden sm:rounded-lg">
                     {{ $slot }}
                 </div>
+                <x-partials.guest-footer />
             </div>
         </body>
     @endguest

@@ -21,7 +21,7 @@ class ProxmoxAuthService
 {
     protected $credentials;
 
-    public function __construct($username, $password, $realm)
+    public function __construct($username = null, $password = null, $realm = null)
     {        
         $this->credentials = [
             'hostname' => config('proxmox.server.hostname'),
@@ -29,8 +29,12 @@ class ProxmoxAuthService
             'password' => config('proxmox.server.password') ?: $password,
             'realm' => config('proxmox.server.realm') ?: $realm,
         ];
-
-        Request::Login($this->credentials);
+        try {
+            Request::Login($this->credentials);
+        } catch(ProxmoxException) {
+            dd('did not work');
+        }
+        
     }
 
     public function authenticate($username, $password, $realm = 'pam') : void
@@ -55,18 +59,6 @@ class ProxmoxAuthService
         $data = Request::Request($path);
 
         return $data;
-    }
-
-    public function getProxmox()
-    {
-        // Retrieve ticket from session and reuse the Proxmox client
-        if (Session::has('proxmox_ticket')) {
-            $this->proxmox->setTicket(Session::get('proxmox_ticket'));
-        } else {
-            $this->authenticate();
-        }
-
-        return $this->proxmox;
     }
 
     public function createPveUser($newUserData = array()): void {
@@ -109,6 +101,41 @@ class ProxmoxAuthService
         $pveNewUser = new Access;
 
         $pveNewUser->updateUser($userid, $data);
+    }
+
+    public function getNodes()
+    {
+        $proxmox = new Nodes;
+
+        $resultData = $proxmox->listNodes();
+
+        return $resultData->data;
+    }
+
+    public function getNodeNetworkDetails($node)  // Get the network details for each node
+    {        
+        $proxmox = new Nodes;
+
+        $nodeNetworkDetail = $proxmox->Network($node);
+            
+        foreach ($nodeNetworkDetail->data as $netObject){
+            if ($netObject->iface === 'vmbr0') {
+                return $netObject->cidr;
+            }
+        }
+
+        $respons = "Unkown";
+
+        return $respons;
+    }
+
+    public function getStatus($node)
+    {
+        $proxmox = new Request;
+
+        $nodeStatusDetail = $proxmox->Request('/nodes/' . $node . '/status/');
+        
+        return $nodeStatusDetail->data;
     }
 
     public function startVM($data): void

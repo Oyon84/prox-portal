@@ -3,6 +3,7 @@
 use Livewire\Volt\Component;
 use App\Services\ProxmoxAuthService;
 use Illuminate\Support\Arr;
+use App\Models\Node;
 
 new class extends Component 
 {    
@@ -15,6 +16,8 @@ new class extends Component
     public $allVms = [];
 
     public $allLxcs = [];
+
+    public $pools = [];
 
     // Dependency injection via mount method
     public function mount(ProxmoxAuthService $proxmox)
@@ -33,9 +36,13 @@ new class extends Component
         $this->nodes = [];
         $this->allVms = [];
         $this->allLxcs = [];
+        $this->pools = [];
         
         // Fetch Nodes data
         $this->nodes = $this->getNodes();
+
+        // Fetch Pool data
+        $this->pools = $this->getPools();
 
         // Fetch VM and LXC data
         $this->allVms = $this->getAllVms();
@@ -152,6 +159,30 @@ new class extends Component
         return $this->proxmox->request('/nodes');
     }
 
+    public function getPools()
+    {
+        $returnData = [];
+        
+        $pools = $this->proxmox->request('/pools');
+
+        foreach ($pools->data as $key => $pool) {
+
+            array_push($returnData, $pool);
+
+        }
+
+        return $returnData;
+    }
+
+    public function getInstancePool($vmid)
+    {
+        $poolData = $this->getPools();
+
+        dd($poolData);
+
+
+    }
+
     public function getAllVms()
     {        
         foreach ($this->nodes->data as $node) {
@@ -197,85 +228,110 @@ new class extends Component
     <x-slot name="header">
         <x-partials.header headerText="Dashboard" svg="dashboard"></x-partials.header>
     </x-slot>
-
-    <div class="mx-5 h-full lg:grid lg:grid-cols-3 xl:grid-cols-5 gap-5 grid-flow-row-dense">
-        <div class="pt-6">
-            <div class="max-w-7xl mx-auto">
-                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6 text-gray-900 dark:text-gray-100">
-                        @livewire('pve-nodes')
-                    </div>
-                </div>
-                <div class="h-full mt-5 bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6 text-gray-900 dark:text-gray-100">
-                    <div class="flex items-center gap-2 pb-3">
-                        <div>
-                            <x-svg.chip></x-svg.chip>
-                        </div>         
-                            <h1 class="font-bold text-xl">Task History</h1>
-                        </div>
-                        <hr class="dark:border-gray-700">
-                        <div class="flex items-center gap-2 py-3">
-                            <div>
-                                <x-svg.host></x-svg.host>
+    @if (Node::first() === null)
+        <div class="mx-5 h-full">
+            <div class="pt-6">
+                <div class="max-w-5xl m-auto">
+                    <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                        <div class="p-6 text-gray-900 dark:text-gray-100">
+                            {{ __('No nodes were found in the database, you can import nodes by running the following Artisan command on the console:')}}
+                            <div class="bg-gray-200 dark:bg-gray-600 p-3 m-2 rounded-md shadow-sm">
+                                <p class="my-1 text-gray-500 dark:text-gray-300">php artisan nodes:update</p>
                             </div>
-                            <h1 class="font-bold">Nodes:</h1>
+                            <p class="mb-5">Follow the instructions and once nodes have been imported refresh this page</p>
+                            <x-primary-button x-on:click="$refresh()">Refresh</x-primary-button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="h-full pt-6 lg:col-span-2 xl:col-span-4">
-            <div wire:poll.5000ms='refresh' class="h-full mx-auto">
-                <x-partials.resource-explorer 
-                :vmData="$allVms" 
-                :lxcData="$allLxcs" 
-                />
+    @else
+        <div class="mx-5 h-full lg:grid lg:grid-cols-3 xl:grid-cols-5 gap-5 grid-flow-row-dense">
+            <div class="pt-6">
+                <div class="max-w-7xl mx-auto">
+                    <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                        <div class="p-6 text-gray-900 dark:text-gray-100">
+                            @livewire('pve-nodes')
+                        </div>
+                    </div>
+                    <div class="h-full mt-5 bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                        <div class="p-6 text-gray-900 dark:text-gray-100">
+                        <div class="flex items-center gap-2 pb-3">
+                            <div>
+                                <x-svg.chip></x-svg.chip>
+                            </div>         
+                                <h1 class="font-bold text-xl">Task History</h1>
+                            </div>
+                            <hr class="dark:border-gray-700">
+                            <div class="flex items-center gap-2 py-3">
+                                <div>
+                                    <x-svg.host></x-svg.host>
+                                </div>
+                                <h1 class="font-bold">Nodes:</h1>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
-        <x-modal name="confirmStopInstance" maxWidth='lg' :show="$errors->isNotEmpty()" focusable>
-            @isset($this->instanceData['vmid'])
-                @php
-                    extract($this->instanceData);
-                @endphp
-                <div class="flex justify-between items-center bg-brand-dark dark:bg-brand-light shadow-md p-6">
-                    <div>
-                        <p class="text-gray-100 dark:text-gray-800">Instance details</p>
-                        <p class="text-gray-300 dark:text-gray-500 text-xs">VMID: {{ $vmid }}</p>
-                        <p class="text-gray-300 dark:text-gray-500 text-xs">Node: {{ $node }}</p>
-                        <p class="text-gray-300 dark:text-gray-500 text-xs">Type: {{ $type }}</p>
-                    </div>
-                    <x-modals.partials.headerNameSvg
-                        name="{{$name}}"
-                        vmid="{{$vmid}}"
-                        node="{{$node}}"
-                        type="{{$type}}" />
+            <div class="h-full pt-6 lg:col-span-2 xl:col-span-4">
+                <div wire:poll.5000ms='refresh' class="h-full mx-auto">
+                    <x-partials.resource-explorer 
+                    :vmData="$allVms" 
+                    :lxcData="$allLxcs" 
+                    />
                 </div>
-                <x-modals.stopInstanceModal vmid="{{$vmid}}" node="{{$node}}" type="{{$type}}"/>
-            @endisset
-        </x-modal>
-        <x-modal name="instanceDetails" :show="$errors->isNotEmpty()" focusable >
-            @isset($this->instanceData['vmid'])
-                @php
-                    extract($this->instanceData);
-                @endphp
-                <div class="flex justify-between items-center bg-brand-dark dark:bg-brand-light shadow-md dark:shadow-gray-700 p-6">
-                    <div>
-                        <p class="text-gray-100 dark:text-gray-800">Instance details</p>
-                        <p class="text-gray-400 dark:text-gray-500 text-xs">VMID: {{ $vmid }}</p>
-                        <p class="text-gray-400 dark:text-gray-500 text-xs">Node: {{ $node }}</p>
-                        <p class="text-gray-400 dark:text-gray-500 text-xs">Type: {{ $type }}</p>
-                    </div>
-                    <div>
+            </div>
+            <x-modal name="confirmStopInstance" maxWidth='lg' :show="$errors->isNotEmpty()" focusable>
+                @isset($this->instanceData['vmid'])
+                    @php
+                        extract($this->instanceData);
+                    @endphp
+                    <div class="flex justify-between items-center bg-brand-dark dark:bg-brand-light shadow-md p-6">
+                        <div>
+                            <p class="text-gray-100 dark:text-gray-800">Instance details</p>
+                            <p class="text-gray-300 dark:text-gray-500 text-xs">VMID: {{ $vmid }}</p>
+                            <p class="text-gray-300 dark:text-gray-500 text-xs">Node: {{ $node }}</p>
+                            <p class="text-gray-300 dark:text-gray-500 text-xs">Type: {{ $type }}</p>
+                        </div>
                         <x-modals.partials.headerNameSvg
-                        name="{{$name}}"
-                        vmid="{{$vmid}}"
-                        node="{{$node}}"
-                        type="{{$type}}" /> 
+                            name="{{$name}}"
+                            vmid="{{$vmid}}"
+                            node="{{$node}}"
+                            type="{{$type}}" 
+                            />
                     </div>
-                </div>
-                <x-modals.instanceDetailsModal vmid="{{$vmid}}" node="{{$node}}" type="{{$type}}"/>
-            @endisset
-        </x-modal>
-    </div>
+                    <x-modals.stopInstanceModal vmid="{{$vmid}}" node="{{$node}}" type="{{$type}}"/>
+                @endisset
+            </x-modal>
+            <x-modal name="instanceDetails" :show="$errors->isNotEmpty()" focusable >
+                @isset($this->instanceData['vmid'])
+                    @php
+                        extract($this->instanceData);
+                    @endphp
+                    <div class="flex justify-between items-center bg-brand-dark dark:bg-brand-light shadow-md dark:shadow-gray-700 p-6">
+                        <div>
+                            <p class="text-gray-100 dark:text-gray-800">Instance details</p>
+                            <p class="text-gray-400 dark:text-gray-500 text-xs">VMID: {{ $vmid }}</p>
+                            <p class="text-gray-400 dark:text-gray-500 text-xs">Node: {{ $node }}</p>
+                            <p class="text-gray-400 dark:text-gray-500 text-xs">Type: {{ $type }}</p>
+                        </div>
+                        <div>
+                            <x-modals.partials.headerNameSvg
+                            name="{{$name}}"
+                            vmid="{{$vmid}}"
+                            node="{{$node}}"
+                            type="{{$type}}" 
+                            /> 
+                        </div>
+                    </div>
+                    <x-modals.instanceDetailsModal 
+                        vmid="{{$vmid}}" 
+                        node="{{$node}}" 
+                        type="{{$type}}" 
+                        name="{{$name}}"
+                        />
+                @endisset
+            </x-modal>
+        </div>
+    @endif    
 </div>

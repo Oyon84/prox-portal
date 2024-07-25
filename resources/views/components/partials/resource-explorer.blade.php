@@ -85,23 +85,6 @@
                             </x-slot>
                         </x-resource-table.resource-item-row>                      
                     @endforeach
-                    @foreach ($lxcData as $key => $lxc)
-                        <x-resource-table.resource-item-row
-                            name="{{ ucfirst($lxc->name) }}"
-                            nameSub="{{ isset($lxc->template) ? 'Template' : 'VMID: ' . $lxc->vmid }}"
-                            details="CPU: {{ $lxc->cpus }} | MEM: {{ round($lxc->mem / 1024 / 1024 / 1024, 2) }} GB | NIC: 1"
-                            detailsSub="{{ $lxc->status == 'stopped' ? 'N/A' : $this->setUptime($lxc->uptime) }}"
-                            status="{{ ucfirst($lxc->status) }}"
-                            ip="{{ $lxc->ip }}"
-                            favorite="{{ (bool)rand(0,1) }}"
-                            vmid="{{ $lxc->vmid }}"
-                            node="{{ $lxc->node }}"
-                            type="{{ 'lxc' }}">    
-                            <x-slot name="svg">
-                                <x-svg.container size="size-5"></x-svg.container>
-                            </x-slot>
-                        </x-resource-table.resource-item-row>                      
-                    @endforeach
                     {{-- Row --}}
                     <x-resource-table.resource-type-row>
                         <x-slot name="svg">

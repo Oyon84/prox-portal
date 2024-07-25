@@ -60,7 +60,10 @@ new class extends Component
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
     <x-flash-error :messages="$errors->get('form.email')" class="mt-2" />
-    <x-partials.guest-branding />
+    <p class="my-3 font-bold dark:text-gray-300">Welcome to Prox Portal, please {{ request()->route()->getName() }}.</p>
+    <div class="mb-3">
+        <hr class="dark:border-gray-700">
+    </div>
     <form wire:submit="login">
         <!-- Email Address -->
         <div>
@@ -84,7 +87,7 @@ new class extends Component
         <div class="mt-4">
             <x-input-label for="realm" :value="__('Realm')" />
             <select wire:model="form.realm" name="realm" id="realm"
-                class="block mt-1 w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm">
+                class="block mt-1 w-full border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 dark:text-gray-300 focus:border-brand-dark focus:ring-brand-dark rounded-md shadow-sm">
                 <option selected value> -- select a realm -- </option>
             @foreach ($this->getDomains() as $key => $value)
                 <option value="{{ $key }}">{{ $value }}</option>
@@ -116,5 +119,4 @@ new class extends Component
             </x-primary-button>
         </div>
     </form>
-    <x-partials.guest-footer />
 </div>

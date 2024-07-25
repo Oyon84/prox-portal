@@ -1,7 +1,8 @@
 <div class="flex gap-3 items-center">
     <div>
         <p class="text-gray-300 dark:text-gray-600 text-xl font-extrabold">{{ $name }}</p>
-        <p class="text-gray-500 dark:text-gray-400 text-xs text-right font-extrabold">{{ 'Running on: ' . $node }}</p>
+        <p class="text-gray-500 dark:text-gray-400 text-xs text-right font-extrabold">{{ 'Hosted on: ' . $node }}</p>
+        <p class="text-gray-500 dark:text-gray-400 text-xs text-right font-extrabold">{{ 'Status: ' . 'Stopped' }}</p>
     </div>
     <div>
         @switch($type)
