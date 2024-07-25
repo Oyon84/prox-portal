@@ -34,6 +34,14 @@ In the first phase I aim to complete a dashboard solution before working on depl
 - Create a redirect if a new user is not member of a resource pool.
 - Create landing page stating to either create a resource pool, or request a resource pool admin to add you.
 
+## Import nodes into database
+
+Before you can start to use prox portal you need to import nodes into the database. This can be done on the console of your webserver hosting the laravel application. 
+
+```
+php artisan nodes:update
+```
+
 ## Security Vulnerabilities
 
 Please do not consider this project for any public facing or production type of deployment.
