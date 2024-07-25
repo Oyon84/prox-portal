@@ -26,6 +26,7 @@ In the first phase I aim to complete a dashboard solution before working on depl
 - Checking for duplicate PVE username during registration.
 - Dashboard display resources based on permissions in PVE.
 - Create stop start functionality for resources on the dashboard.
+- Artisan command nodes:update to import cluster nodes into the database.
 
 ## Features working on currently
 
