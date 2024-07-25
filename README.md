@@ -17,6 +17,8 @@ For communication with Proxmox I made use of [Saleh7/ProxmoxVE_PHP_API](https://
 In the first phase I aim to complete a dashboard solution before working on deployment of new assets. This includes:
 - Status of VMs or Containers
 - Start, Stop or Save VMs or Containers
+- Create and delete resources (vm's and containers)
+- Membership management resource pools
 
 ## Features so far
 
