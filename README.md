@@ -52,4 +52,4 @@ Please do not consider this project for any public facing or production type of 
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+This application is build with the Laravel framework and is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
