@@ -2,9 +2,12 @@
 
 use Livewire\Volt\Component;
 use App\Services\ProxmoxAuthService;
+use App\Models\Node;
 
 new class extends Component {
     public $node;
+
+    public $storedNodes;
 
     public $allVms = [];
 
@@ -13,6 +16,8 @@ new class extends Component {
     public function mount(ProxmoxAuthService $proxmox)
     {        
         $this->node = $proxmox->authenticate(Auth::user()->pveUsername,'Nortel01','pve');
+
+        $this->storedNodes = Node::where('available', 1)->get();
 
         $this->nodes = $this->getNodes($proxmox);
 
@@ -72,7 +77,7 @@ new class extends Component {
             <x-svg.host></x-svg.host>
         </div>
         <h1 class="font-bold">Nodes:</h1>
-        {{ count($this->nodes->data) }}
+        <x-svg.tooltip.bolt size="size-5 text-green-500" count="{{ count($this->storedNodes) }}"/><x-svg.tooltip.bolt-slash size="size-5 text-red-500"/>
     </div>
     <div class="flex items-center gap-2 py-3">
         <div>

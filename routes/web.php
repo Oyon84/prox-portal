@@ -12,6 +12,8 @@ Route::view('dashboard1', 'dashboard1')
 Route::middleware(['auth', 'verified'])->group(function () {
     Volt::route('dashboard', 'dashboard')
         ->name('dashboard');
+    Volt::route('nodes', 'nodes')
+        ->name('nodes');
 });
 
 Route::view('profile', 'profile')

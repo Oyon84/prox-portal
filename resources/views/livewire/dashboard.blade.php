@@ -1,13 +1,19 @@
 <?php
 
 use Livewire\Volt\Component;
+use Livewire\Attributes\Computed;
 use App\Services\ProxmoxAuthService;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Node;
 
 new class extends Component 
 {    
     protected $proxmox;
+
+    public $nodeCheck;
+
+    public $pveUsername;
 
     public $nodes;
 
@@ -21,7 +27,11 @@ new class extends Component
 
     // Dependency injection via mount method
     public function mount(ProxmoxAuthService $proxmox)
-    {
+    {        
+        $this->nodeCheck = Node::first() ? true : false;
+
+        $this->pveUsername = Auth::user()->pveUsername;
+        
         $this->initializeProxmox($proxmox);
     }
 
@@ -30,7 +40,7 @@ new class extends Component
         $this->proxmox = $proxmox;
 
         // Authenticate the Proxmox service
-        $this->proxmox->authenticate(Auth::user()->pveUsername, 'Nortel01', 'pve');
+        $this->proxmox->authenticate($this->pveUsername, 'Nortel01', 'pve');
 
         // Reset data to avoid duplication
         $this->nodes = [];
@@ -49,17 +59,32 @@ new class extends Component
         $this->allLxcs = $this->getAllLxcs();
     }
 
+    protected function resetProxmoxInstance(ProxmoxAuthService $proxmox)
+    {
+        $this->proxmox = $proxmox;
+
+        // Authenticate the Proxmox service
+        $this->proxmox->authenticate($this->pveUsername, 'Nortel01', 'pve');
+        
+        $this->allVms = [];
+        $this->allLxcs = [];
+
+        // Fetch VM and LXC data
+        $this->allVms = $this->getAllVms();
+        $this->allLxcs = $this->getAllLxcs();
+    }
+
     protected function ensureProxmoxInitialized()
     {
         if (is_null($this->proxmox)) {
             // Reinitialize if needed
-            $this->initializeProxmox(app(ProxmoxAuthService::class));
+            $this->resetProxmoxInstance(app(ProxmoxAuthService::class));
         }
     }
 
     public function refresh()
     {
-        $this->initializeProxmox(app(ProxmoxAuthService::class));
+        $this->resetProxmoxInstance(app(ProxmoxAuthService::class));
     }
 
     // Ensure $proxmox is not null before use
@@ -228,14 +253,14 @@ new class extends Component
     <x-slot name="header">
         <x-partials.header headerText="Dashboard" svg="dashboard"></x-partials.header>
     </x-slot>
-    @if (Node::first() === null)
+    @if ($this->nodeCheck === false)
         <div class="mx-5 h-full">
             <div class="pt-6">
                 <div class="max-w-5xl m-auto">
                     <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                         <div class="p-6 text-gray-900 dark:text-gray-100">
                             {{ __('No nodes were found in the database, you can import nodes by running the following Artisan command on the console:')}}
-                            <div class="bg-gray-200 dark:bg-gray-600 p-3 m-2 rounded-md shadow-sm">
+                            <div class="bg-gray-200 dark:bg-gray-600 p-3 m-2 rounded-md shadow-sm border-4 border-gray-50">
                                 <p class="my-1 text-gray-500 dark:text-gray-300">php artisan nodes:update</p>
                             </div>
                             <p class="mb-5">Follow the instructions and once nodes have been imported refresh this page</p>
