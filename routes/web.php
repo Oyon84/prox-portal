@@ -14,6 +14,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('dashboard');
     Volt::route('nodes', 'nodes')
         ->name('nodes');
+    Volt::route('vms', 'vms')
+        ->name('vms');
+    Volt::route('lxcs', 'lxcs')
+        ->name('containers');
 });
 
 Route::view('profile', 'profile')

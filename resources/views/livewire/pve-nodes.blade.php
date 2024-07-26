@@ -69,52 +69,97 @@ new class extends Component {
         <div>
             <x-svg.chip></x-svg.chip>
         </div>         
-        <h1 class="font-bold text-xl">Summery Stats</h1>
+        <h1 class="font-bold text-xl">Resources</h1>
     </div>
     <hr class="dark:border-gray-700">
-    <div class="flex items-center gap-2 py-3">
-        <div>
+
+    <x-partials.sidebar-item 
+        route="nodes" 
+        label="Nodes"
+        >
+        <x-slot name="svg">
             <x-svg.host></x-svg.host>
-        </div>
-        <h1 class="font-bold">Nodes:</h1>
-        <x-svg.tooltip.bolt size="size-5 text-green-500" count="{{ count($this->storedNodes) }}"/><x-svg.tooltip.bolt-slash size="size-5 text-red-500"/>
-    </div>
-    <div class="flex items-center gap-2 py-3">
-        <div>
-            <x-svg.vm></x-svg.vm>
-        </div>
-        <h1 class="font-bold">VMs:</h1>
-        {{ count($this->allVms) }}
-    </div>
-    <div class="flex items-center gap-2 py-3">
-        <div>
-            <x-svg.container></x-svg.container>
-        </div>
-        <h1 class="font-bold">LXCs:</h1>
-        {{ count($this->allLxcs) }}
-    </div>
-    <div class="flex items-center gap-2 py-3">
-        <div>
-            <x-svg.net></x-svg.net>
-        </div>
-        <h1 class="font-bold">Networks:</h1>
-        {{ 2 }}
-    </div>
-    <div class="flex items-center gap-2 py-3">
-        <div>
-            <x-svg.disk></x-svg.disk>
-        </div>
-        <h1 class="font-bold">Disks:</h1>
-        {{ 5 }}
-    </div>
+        </x-slot>
+
+        <x-slot name="statusSvg">
+            <div class="flex bg-gray-200 dark:bg-gray-700 rounded-md px-2">
+                <x-svg.tooltip.bolt 
+                    size="size-5 text-green-500" 
+                    count="{{ count($this->storedNodes) }}"/>
+                <x-svg.tooltip.bolt-slash 
+                    size="size-5 text-red-500"/>
+            </div>
+        </x-slot>
+    </x-partials.sidebar-item>
+
+    <x-partials.sidebar-item 
+        route="vms" 
+        label="VMs"
+        >
+        <x-slot name="svg">
+            <x-svg.vm />
+        </x-slot>
+        <x-slot name="value">
+            {{ count($this->allVms) }}
+        </x-slot>
+    </x-partials.sidebar-item>
+
+    <x-partials.sidebar-item 
+        route="containers" 
+        label="LXC Containers"
+        >
+        <x-slot name="svg">
+            <x-svg.container />
+        </x-slot>
+        <x-slot name="value">
+            {{ count($this->allLxcs) }}
+        </x-slot>
+    </x-partials.sidebar-item>
+
+    <x-partials.sidebar-item 
+        route="nodes" 
+        label="Networks"
+        >
+        <x-slot name="svg">
+            <x-svg.net />
+        </x-slot>
+        <x-slot name="value">
+            {{ __('2') }}
+        </x-slot>
+    </x-partials.sidebar-item>
+
+    <x-partials.sidebar-item 
+        route="nodes" 
+        label="Storage"
+        >
+        <x-slot name="svg">
+            <x-svg.disk />
+        </x-slot>
+        <x-slot name="value">
+            {{ __('2') }}
+        </x-slot>
+    </x-partials.sidebar-item>
+
     <hr class="dark:border-gray-700">
     <div class="flex items-center gap-2 py-3">
         <div>
-            <x-svg.user></x-svg.user>
-        </div>
-        <h1 class="font-bold">User:</h1>
-        {{ 'cverscho@pve' }}
+            <x-svg.chip></x-svg.chip>
+        </div>         
+        <h1 class="font-bold text-xl">User Settings</h1>
     </div>
+    <hr class="dark:border-gray-700">
+
+    <x-partials.sidebar-item 
+        route="profile" 
+        label="User"
+        >
+        <x-slot name="svg">
+            <x-svg.user />
+        </x-slot>
+        <x-slot name="value">
+            {{ Auth::user()->pveUsername . '@pve' }}
+        </x-slot>
+    </x-partials.sidebar-item>
     <div class="flex items-center gap-2 py-3">
         <div>
             <x-svg.permissions></x-svg.permissions>

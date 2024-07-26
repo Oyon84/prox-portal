@@ -19,6 +19,15 @@ $svgHTML = "<x-svg." . $svg . " />"
                 @case('dashboard')
                     <x-svg.dashboard />
                     @break
+                @case('nodes')
+                    <x-svg.host />
+                    @break
+                @case('vms')
+                    <x-svg.vm />
+                    @break
+                @case('lxcs')
+                    <x-svg.container />
+                    @break
                 @default
                     <x-svg.chip />
             @endswitch
@@ -30,4 +39,4 @@ $svgHTML = "<x-svg." . $svg . " />"
     <div class="flex">
         <x-header-badges></x-header-badges>  
     </div>                 
-</h2>
+</h2>   

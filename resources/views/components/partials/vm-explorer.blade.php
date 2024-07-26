@@ -5,12 +5,12 @@
                 <x-svg.explorer></x-svg.explorer>   
             </div>
             <div class="flex gap-2 items-center w-full">
-                <h1 class="font-bold text-xl mr-10 text-nowrap">Node Explorer</h1>
+                <h1 class="font-bold text-xl mr-10 text-nowrap">VM Explorer</h1>
                 <x-text-input 
                     class="block mt-1 w-full" 
-                    placeholder="Lookup resources"/>
+                    placeholder="Lookup VMs"/>
             </div>
         </div>
     </div>
-    Node Explorer
+    VM Explorer
 </div>

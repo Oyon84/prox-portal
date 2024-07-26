@@ -9,7 +9,7 @@ new class extends Component {
 <div>
     <div class="h-full">
         <x-slot name="header">
-            <x-partials.header headerText="Nodes" svg="nodes"></x-partials.header>
+            <x-partials.header headerText="VMs" svg="vms"></x-partials.header>
         </x-slot>
         <div class="mx-5 h-full lg:grid lg:grid-cols-3 xl:grid-cols-5 gap-5 grid-flow-row-dense">
             <div class="pt-6">
@@ -40,7 +40,7 @@ new class extends Component {
             </div>
             <div class="h-full pt-6 lg:col-span-2 xl:col-span-4">
                 <div wire:poll.5000ms class="h-full mx-auto">
-                    <x-partials.node-explorer 
+                    <x-partials.vm-explorer 
                         
                     />
                 </div>
