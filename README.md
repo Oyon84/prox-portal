@@ -17,6 +17,8 @@ For communication with Proxmox I made use of [Saleh7/ProxmoxVE_PHP_API](https://
 In the first phase I aim to complete a dashboard solution before working on deployment of new assets. This includes:
 - Status of VMs or Containers
 - Start, Stop or Save VMs or Containers
+- Create and delete resources (vm's and containers)
+- Membership management resource pools
 
 ## Features so far
 
@@ -26,12 +28,25 @@ In the first phase I aim to complete a dashboard solution before working on depl
 - Checking for duplicate PVE username during registration.
 - Dashboard display resources based on permissions in PVE.
 - Create stop start functionality for resources on the dashboard.
+- Artisan command nodes:update to import cluster nodes into the database.
+- Light and Dark mode based on browser setting.
 
 ## Features working on currently
 
 - Create views to show details about assets.
 - Create a redirect if a new user is not member of a resource pool.
 - Create landing page stating to either create a resource pool, or request a resource pool admin to add you.
+- Light and Dark mode by toggle.
+
+## Import nodes into database
+
+Prox Portal lets you choose which hosts you want to use with prox portal. To import nodes into the prox portal database run the following command from the console.
+
+```
+php artisan nodes:update
+```
+
+Per node you can decide to import or not, nodes imported are available for placement of resources.
 
 ## Security Vulnerabilities
 
@@ -39,4 +54,4 @@ Please do not consider this project for any public facing or production type of 
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+This application is build with the Laravel framework and is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
