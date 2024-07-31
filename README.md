@@ -23,13 +23,14 @@ In the first phase I aim to complete a dashboard solution before working on depl
 ## Features so far
 
 - Dual authentication, Laravel Session authentication followed by PVE authentication over API.
-- PVE User creation during registration, PVE account remains disabled when Laravel account is not verified yet by email.
-- Enable PVE user account when Laravel account is verified by email.
-- Checking for duplicate PVE username during registration.
-- Dashboard display resources based on permissions in PVE.
-- Create stop start functionality for resources on the dashboard.
+    - PVE User creation during registration, PVE account remains disabled when Laravel account is not verified yet by email.
+    - Enable PVE user account when Laravel account is verified by email.
+    - Checking for duplicate PVE username during registration.
 - Artisan command nodes:update to import cluster nodes into the database.
-- Light and Dark mode based on browser setting.
+- Dashboard display resources based on permissions in PVE.
+    - Create stop start functionality for resources on the dashboard.
+    - Light and Dark mode based on browser setting.
+    - Recent task list for logged in user.
 
 ## Features working on currently
 
