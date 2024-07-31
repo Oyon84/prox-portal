@@ -47,7 +47,12 @@ new class extends Component
 }; ?>
 
 <div>
-    <x-partials.guest-branding></x-partials.guest-branding>
+    <x-flash-error :messages="$errors->get('form.email')" class="mt-2" />
+        <p class="my-3 font-bold dark:text-gray-300">Welcome to Prox Portal, please {{ request()->route()->getName() }}</p>
+        <p class="my-3 text-sm dark:text-gray-300">Already have an account? Please <a class="text-blue-800" href="{{ route('login') }}">login</a></p>
+        <div class="mb-3">
+            <hr class="dark:border-gray-700">
+    </div>
     <form wire:submit="register">
         <!-- First Name -->
         <div>
@@ -110,5 +115,4 @@ new class extends Component
             </x-primary-button>
         </div>
     </form>
-    <x-partials.guest-footer />
 </div>

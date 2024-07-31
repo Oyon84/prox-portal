@@ -18,11 +18,11 @@
         {{-- @dump('authed')
         @dump(session()->has('PVE_Authenticated')) --}}
         <body class="font-sans antialiased">
-            <div class="h-screen overflow-hidden bg-gray-100 dark:bg-gray-900">
+            <div x-data="open: true" class="h-screen overflow-hidden bg-gray-100 dark:bg-gray-900">
                 <livewire:layout.navigation />
                 <!-- Page Heading -->
                 @if (isset($header))
-                    <header class="bg-white dark:bg-gray-800 shadow">
+                    <header x-show="open" class="bg-white dark:bg-gray-800 shadow">
                         <div class="mx-5 py-6 sm:px-6 lg:px-8">
                             {{ $header }}   
                         </div>

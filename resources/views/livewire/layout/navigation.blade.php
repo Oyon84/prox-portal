@@ -48,7 +48,7 @@ new class extends Component
                 </div>
                 @if(!request()->routeIs('dashboard'))
                     <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                        <x-nav-dynamic-link :href="url()->previous()" :active="$this->getCurrentRoute()" wire:navigate>
+                        <x-nav-dynamic-link :href="route('dashboard')" :active="$this->getCurrentRoute()" wire:navigate>
                             {{ $this->getCurrentRouteCapitalized() }}
                         </x-nav-dynamic-link>
                     </div>

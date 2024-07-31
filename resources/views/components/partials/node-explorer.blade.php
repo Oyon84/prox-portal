@@ -12,5 +12,5 @@
             </div>
         </div>
     </div>
-    Node Explorer
+    <p>Node Explorer</p>
 </div>

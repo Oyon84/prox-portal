@@ -2,3 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer utilities {
+    .no-scrollbar::-webkit-scrollbar {
+        display: node;
+    }
+
+    .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+}
+

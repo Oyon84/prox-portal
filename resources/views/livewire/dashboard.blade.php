@@ -122,7 +122,7 @@ new class extends Component
         $this->dispatch('open-modal', $modalName);
     }
 
-    public function stopInstance($name, $vmid, $node, $type)
+    public function stopInstance($modalName, $vmid, $node, $type)
     {        
         $this->ensureProxmoxInitialized();
         switch ($type) {
@@ -143,10 +143,10 @@ new class extends Component
                 break;
         }
         
-        $this->dispatch('close-modal', $name);
+        $this->dispatch('close-modal', $modalName);
     }
 
-    public function shutdownInstance($name, $vmid, $node, $type)
+    public function shutdownInstance($modalName, $vmid, $node, $type)
     {
         $this->ensureProxmoxInitialized();
         switch ($type) {
@@ -167,7 +167,7 @@ new class extends Component
                 break;
         }   
         
-        $this->dispatch('close-modal', $name);
+        $this->dispatch('close-modal', $modalName);
     }
 
     public function setUptime($seconds)
@@ -277,23 +277,6 @@ new class extends Component
                     <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                         <div class="p-6 text-gray-900 dark:text-gray-100">
                             @livewire('pve-nodes')
-                        </div>
-                    </div>
-                    <div class="h-full mt-5 bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                        <div class="p-6 text-gray-900 dark:text-gray-100">
-                        <div class="flex items-center gap-2 pb-3">
-                            <div>
-                                <x-svg.chip></x-svg.chip>
-                            </div>         
-                                <h1 class="font-bold text-xl">Task History</h1>
-                            </div>
-                            <hr class="dark:border-gray-700">
-                            <div class="flex items-center gap-2 py-3">
-                                <div>
-                                    <x-svg.host></x-svg.host>
-                                </div>
-                                <h1 class="font-bold">Nodes:</h1>
-                            </div>
                         </div>
                     </div>
                 </div>
