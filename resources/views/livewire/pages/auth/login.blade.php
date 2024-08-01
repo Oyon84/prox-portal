@@ -3,6 +3,7 @@
 use App\Livewire\Forms\LoginForm;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
 use Livewire\Volt\Component;
 use Illuminate\Support\Facades\Http;
 use App\Services\ProxmoxAuthService;
@@ -25,6 +26,7 @@ new class extends Component
 
         try {
             $proxmoxAuth->authenticate(Auth::user()->pveUsername, $this->form->password, 'pve');
+            Session::put('pve_password', encrypt($this->form->password));
         } catch(ErrorException) {
             
             session()->invalidate();

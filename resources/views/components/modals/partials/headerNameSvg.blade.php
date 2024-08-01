@@ -1,8 +1,8 @@
 <div class="flex gap-3 items-center">
     <div>
-        <p class="text-gray-300 dark:text-gray-600 text-xl font-extrabold">{{ $name }}</p>
-        <p class="text-gray-500 dark:text-gray-400 text-xs text-right font-extrabold">{{ 'Hosted on: ' . $node }}</p>
-        <p class="text-gray-500 dark:text-gray-400 text-xs text-right font-extrabold">{{ 'Status: ' . 'Stopped' }}</p>
+        <p class="text-gray-300 dark:text-gray-600 text-xl text-right font-extrabold">{{ $name }}</p>
+        <p class="text-gray-500 dark:text-gray-400 text-xs text-right font-extrabold">{{ $label1 . $value1 }}</p>
+        <p class="text-gray-500 dark:text-gray-400 text-xs text-right font-extrabold">{{ $label2 . $value2 }}</p>
     </div>
     <div>
         @switch($type)
@@ -11,6 +11,9 @@
                 @break
             @case('lxc')
                 <x-svg.container size="size-16 text-gray-300 dark:text-gray-700"/>
+                @break
+            @case('task')
+                <x-svg.task size="size-16 text-gray-300 dark:text-gray-700"/>
                 @break
             @default
                 <x-svg.chip size="size-16 text-gray-300 dark:text-gray-700"/>

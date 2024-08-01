@@ -1,61 +1,57 @@
 <?php
 
 use Livewire\Volt\Component;
-use Livewire\Attributes\Computed;
 use App\Services\ProxmoxAuthService;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 use App\Models\Node;
+use App\Models\User;
+use App\Models\Vm;
 
 new class extends Component 
 {    
     protected $proxmox;
-
     public $nodeCheck;
-
     public $pveUsername;
-
     public $nodes;
-
+    public $vm;
     public $instanceData = [];
-    
     public $allVms = [];
-
     public $allLxcs = [];
-
     public $pools = [];
 
     // Dependency injection via mount method
-    public function mount(ProxmoxAuthService $proxmox)
+    public function mount(ProxmoxAuthService $proxmox, Node $node, Vm $vm)
     {        
-        $this->nodeCheck = Node::first() ? true : false;
-
+        $this->nodeCheck = $node->first() ? true : false;
+        $this->nodes = $node;
+        $this->vm = $vm;
         $this->pveUsername = Auth::user()->pveUsername;
-        
-        $this->initializeProxmox($proxmox);
+        $this->initializeProxmox($proxmox, $node);
     }
 
-    protected function initializeProxmox(ProxmoxAuthService $proxmox)
+    protected function initializeProxmox(ProxmoxAuthService $proxmox, Node $node)
     {
         $this->proxmox = $proxmox;
+        $vm = $this->vm;
 
         // Authenticate the Proxmox service
-        $this->proxmox->authenticate($this->pveUsername, 'Nortel01', 'pve');
+        $this->proxmox->authenticate($this->pveUsername, decrypt(Session::get('pve_password')), 'pve');
 
         // Reset data to avoid duplication
-        $this->nodes = [];
+        // $this->nodes = [];
         $this->allVms = [];
         $this->allLxcs = [];
         $this->pools = [];
         
         // Fetch Nodes data
-        $this->nodes = $this->getNodes();
+        $this->nodes = $node->getAllNodes($this->proxmox);
 
         // Fetch Pool data
         $this->pools = $this->getPools();
 
         // Fetch VM and LXC data
-        $this->allVms = $this->getAllVms();
+        $this->allVms = $vm->getAllVms($this->proxmox);
         $this->allLxcs = $this->getAllLxcs();
     }
 
@@ -64,13 +60,13 @@ new class extends Component
         $this->proxmox = $proxmox;
 
         // Authenticate the Proxmox service
-        $this->proxmox->authenticate($this->pveUsername, 'Nortel01', 'pve');
+        $this->proxmox->authenticate($this->pveUsername, decrypt(Session::get('pve_password')), 'pve');
         
         $this->allVms = [];
         $this->allLxcs = [];
 
         // Fetch VM and LXC data
-        $this->allVms = $this->getAllVms();
+        $this->allVms = $this->vm->getAllVms($this->proxmox);
         $this->allLxcs = $this->getAllLxcs();
     }
 
@@ -179,11 +175,6 @@ new class extends Component
         return $hours > 0 ? "$hours hours, $minutes minutes" : ($minutes > 0 ? "$minutes minutes, $seconds seconds" : "$seconds seconds");
     }
 
-    public function getNodes()
-    {        
-        return $this->proxmox->request('/nodes');
-    }
-
     public function getPools()
     {
         $returnData = [];
@@ -206,19 +197,6 @@ new class extends Component
         dd($poolData);
 
 
-    }
-
-    public function getAllVms()
-    {        
-        foreach ($this->nodes->data as $node) {
-            $vms = $this->proxmox->request('/nodes/' . $node->node . '/qemu/', ['full' => true]);
-            foreach ($vms->data as $vm) {
-                $vm->node = $node->node;
-                $this->allVms[] = $vm;
-            }
-        }
-        
-        return collect($this->allVms)->sortBy('name');
     }
 
     public function getAllLxcs()
@@ -304,13 +282,17 @@ new class extends Component
                         <x-modals.partials.headerNameSvg
                             name="{{$name}}"
                             vmid="{{$vmid}}"
-                            node="{{$node}}"
-                            type="{{$type}}" 
+                            value1="{{$node}}"
+                            type="{{$type}}"
+                            value2="OK" 
+                            label1="Running on: "
+                            label2="Status: "
                             />
                     </div>
                     <x-modals.stopInstanceModal vmid="{{$vmid}}" node="{{$node}}" type="{{$type}}"/>
                 @endisset
             </x-modal>
+
             <x-modal name="instanceDetails" :show="$errors->isNotEmpty()" focusable >
                 @isset($this->instanceData['vmid'])
                     @php
@@ -327,8 +309,11 @@ new class extends Component
                             <x-modals.partials.headerNameSvg
                             name="{{$name}}"
                             vmid="{{$vmid}}"
-                            node="{{$node}}"
-                            type="{{$type}}" 
+                            value1="{{$node}}"
+                            type="{{$type}}"
+                            value2="OK" 
+                            label1="Running on: "
+                            label2="Status: " 
                             /> 
                         </div>
                     </div>
