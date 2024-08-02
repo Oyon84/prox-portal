@@ -20,6 +20,11 @@ In the first phase I aim to complete a dashboard solution before working on depl
 - Create and delete resources (vm's and containers)
 - Membership management resource pools
 
+## Screenshots
+<details>
+    <summery>Screenshot of the dashboard interface, light and darkmode</summery>
+</details>
+
 ## Features so far
 
 - Dual authentication, Laravel Session authentication followed by PVE authentication over API.
