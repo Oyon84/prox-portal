@@ -5,7 +5,7 @@ use App\Services\ProxmoxAuthService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use App\Models\Node;
-use App\Models\User;
+use App\Models\Lxc;
 use App\Models\Vm;
 
 new class extends Component 
@@ -15,17 +15,19 @@ new class extends Component
     public $pveUsername;
     public $nodes;
     public $vm;
+    public $lxc;
     public $instanceData = [];
     public $allVms = [];
     public $allLxcs = [];
     public $pools = [];
 
     // Dependency injection via mount method
-    public function mount(ProxmoxAuthService $proxmox, Node $node, Vm $vm)
+    public function mount(ProxmoxAuthService $proxmox, Node $node, Vm $vm, Lxc $lxc)
     {        
         $this->nodeCheck = $node->first() ? true : false;
         $this->nodes = $node;
         $this->vm = $vm;
+        $this->lxc = $lxc;
         $this->pveUsername = Auth::user()->pveUsername;
         $this->initializeProxmox($proxmox, $node);
     }
@@ -33,14 +35,13 @@ new class extends Component
     protected function initializeProxmox(ProxmoxAuthService $proxmox, Node $node)
     {
         $this->proxmox = $proxmox;
-        $vm = $this->vm;
 
         // Authenticate the Proxmox service
         $this->proxmox->authenticate($this->pveUsername, decrypt(Session::get('pve_password')), 'pve');
 
         // Reset data to avoid duplication
         // $this->nodes = [];
-        $this->allVms = [];
+        // $this->allVms = [];
         $this->allLxcs = [];
         $this->pools = [];
         
@@ -51,8 +52,8 @@ new class extends Component
         $this->pools = $this->getPools();
 
         // Fetch VM and LXC data
-        $this->allVms = $vm->getAllVms($this->proxmox);
-        $this->allLxcs = $this->getAllLxcs();
+        $this->allVms = $this->vm->getAllVms($this->proxmox);
+        $this->allLxcs = $this->lxc->getAllLxcs($this->proxmox);
     }
 
     protected function resetProxmoxInstance(ProxmoxAuthService $proxmox)
@@ -67,7 +68,7 @@ new class extends Component
 
         // Fetch VM and LXC data
         $this->allVms = $this->vm->getAllVms($this->proxmox);
-        $this->allLxcs = $this->getAllLxcs();
+        $this->allLxcs = $this->lxc->getAllLxcs($this->proxmox);
     }
 
     protected function ensureProxmoxInitialized()
@@ -197,32 +198,6 @@ new class extends Component
         dd($poolData);
 
 
-    }
-
-    public function getAllLxcs()
-    {
-        foreach ($this->nodes->data as $node) {
-            $lxcs = $this->proxmox->request('/nodes/' . $node->node . '/lxc/');
-            foreach ($lxcs->data as $lxc) {
-                $lxc->node = $node->node;
-                $interfaces = $this->proxmox->request('/nodes/' . $node->node . '/lxc/' . $lxc->vmid . '/interfaces/')->data;
-                if ($interfaces) {
-                    foreach ($interfaces as $interface) {
-                        if ($interface->name == 'eth0') {
-                            $lxc->interface = $interface->name;
-                            $lxc->ip = $interface->inet;
-                        }
-                    }
-                } else {
-                    $lxc->interface = 'N/A';
-                    $lxc->ip = 'n/a';
-                }
-                
-                $this->allLxcs[] = $lxc;
-            }
-        }
-
-        return collect($this->allLxcs)->sortBy('name');
     }
 
 }; ?>

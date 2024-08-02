@@ -8,6 +8,7 @@ use App\Models\Node;
 use App\Models\Task;
 use App\Models\User;
 use App\Models\Vm;
+use App\Models\Lxc;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 
@@ -21,13 +22,13 @@ new class extends Component {
     public $allLxcs = [];
     public $taskData = [];
 
-    public function mount(ProxmoxAuthService $proxmox, Vm $vm, Node $node)
+    public function mount(ProxmoxAuthService $proxmox, Vm $vm, Lxc $lxc, Node $node)
     {        
         $this->proxmox = $proxmox->authenticate(Auth::user()->pveUsername, decrypt(Session::get('pve_password')),'pve');
         $this->storedNodes = $node->where('available', 1)->get();
         $this->nodes = $node->getAllNodes($proxmox);
         $this->allVms = $vm->getAllVms($proxmox);
-        $this->allLxcs = $this->getAllLxcs($proxmox);
+        $this->allLxcs = $lxc->getAllLxcs($proxmox);
         $this->tasks = $this->getTasks($proxmox)->data;
     }
 
@@ -99,18 +100,7 @@ new class extends Component {
 
         return $this->storedTask = $tasks->getTaskByUid($uid);
     }
-
-    public function getAllLxcs($proxmoxAuthInstance)
-    {
-        foreach ($this->nodes->data as $key => $node) {
-            $lxcs = $proxmoxAuthInstance->request('/nodes/' . $node->node . '/lxc/');
-            foreach ($lxcs->data as $key => $lxc) {
-                array_push($this->allLxcs, $lxc);
-            }
-        }
-        
-        return $this->allLxcs;
-    }
+    
 }; ?>
 <div>
     <div>
