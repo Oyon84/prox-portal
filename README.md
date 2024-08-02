@@ -23,8 +23,8 @@ In the first phase I aim to complete a dashboard solution before working on depl
 ## Screenshots
 <details>
     <summary><i>Screenshot of the dashboard interface, light and darkmode</i>i></summary><br>
-    ![Screenshot Light Mode](https://github.com/user-attachments/assets/a7bdab03-44a2-49f2-83eb-ef3facf3e252.png)<br>
-    ![Screenshot Dark Mode](https://github.com/user-attachments/assets/d49dda65-49b7-47e1-96d7-e22e8bbc1a02.png)
+    ![Screenshot Light Mode](https://github.com/user-attachments/assets/a7bdab03-44a2-49f2-83eb-ef3facf3e252)<br>
+    ![Screenshot Dark Mode](https://github.com/user-attachments/assets/d49dda65-49b7-47e1-96d7-e22e8bbc1a02)
 </details>
 
 ## Features so far
