@@ -2,6 +2,7 @@
 
 use Livewire\Volt\Component;
 use App\Services\ProxmoxAuthService;
+use App\Services\ProxmoxInstanceService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use App\Models\Node;
@@ -11,14 +12,20 @@ use App\Models\Pool;
 
 new class extends Component 
 {    
+    // Services
     protected $proxmox;
+    
+    // Checks
     public $nodeCheck;
     public $pveUsername;
+
+    // Models
     public $nodes;
     public $vm;
     public $lxc;
     public $pool;
 
+    // Result Arrays
     public $instanceData = [];
     public $allVms = [];
     public $allLxcs = [];
@@ -43,12 +50,6 @@ new class extends Component
 
         // Authenticate the Proxmox service
         $this->proxmox->authenticate($this->pveUsername, decrypt(Session::get('pve_password')), 'pve');
-
-        // Reset data to avoid duplication
-        // $this->nodes = [];
-        // $this->allVms = [];
-        $this->allLxcs = [];
-        $this->pools = [];
         
         // Fetch Nodes data
         $this->nodes = $node->getAllNodes($this->proxmox);
@@ -84,32 +85,30 @@ new class extends Component
         }
     }
 
+    public function setUptime($seconds)
+    {
+        $hours = floor($seconds / 3600);
+        $minutes = floor(($seconds / 60) % 60);
+        $seconds = $seconds %60;
+
+        return $hours > 0 ? "$hours hours, $minutes minutes" : ($minutes > 0 ? "$minutes minutes, $seconds seconds" : "$seconds seconds");
+    }
+
     public function refresh()
     {
         $this->resetProxmoxInstance(app(ProxmoxAuthService::class));
     }
 
     // Ensure $proxmox is not null before use
-    public function startInstance($vmid, $node, $type)
+    public function startInstance($vmid, $node, $type): void
     {                
         $this->ensureProxmoxInitialized();
-        switch ($type) {
-            case 'vm':
-                $this->proxmox->startVM([
-                    'vmid' => $vmid,
-                    'node' => $node,
-                    'type' => $type,
-                ]);
-                break;
-            
-            default:
-                $this->proxmox->startLXC([
-                    'vmid' => $vmid,
-                    'node' => $node,
-                    'type' => $type,
-                ]);
-                break;
-        }
+
+        $this->proxmox->startInstance([
+            'vmid' => $vmid,
+            'node' => $node,
+            'type' => $type,
+        ]);
     }
 
     public function openModal($modalName, $vmid, $node, $type, $name)
@@ -170,24 +169,6 @@ new class extends Component
         }   
         
         $this->dispatch('close-modal', $modalName);
-    }
-
-    public function setUptime($seconds)
-    {
-        $hours = floor($seconds / 3600);
-        $minutes = floor(($seconds / 60) % 60);
-        $seconds = $seconds %60;
-
-        return $hours > 0 ? "$hours hours, $minutes minutes" : ($minutes > 0 ? "$minutes minutes, $seconds seconds" : "$seconds seconds");
-    }
-
-    public function getInstancePool($vmid)
-    {
-        $poolData = $this->getPools();
-
-        dd($poolData);
-
-
     }
 
 }; ?>

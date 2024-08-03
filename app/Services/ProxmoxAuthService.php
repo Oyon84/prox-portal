@@ -138,6 +138,29 @@ class ProxmoxAuthService
         return $nodeStatusDetail->data;
     }
 
+    public function startInstance($data)
+    {        
+        extract($data);
+        
+        switch ($type) {
+            case 'vm':
+                $this->startVM([
+                    'vmid' => $vmid,
+                    'node' => $node,
+                    'type' => $type,
+                ]);
+                break;
+            
+            default:
+                $this->startLXC([
+                    'vmid' => $vmid,
+                    'node' => $node,
+                    'type' => $type,
+                ]);
+                break;
+        }
+    }
+
     public function startVM($data): void
     {
         $node = $data['node'];
@@ -145,7 +168,7 @@ class ProxmoxAuthService
 
         $proxmox = new Nodes;
 
-        $instance = $proxmox->qemuStart($node, $vmid);
+        $proxmox->qemuStart($node, $vmid);
 
         return;
 
@@ -158,7 +181,7 @@ class ProxmoxAuthService
 
         $proxmox = new Nodes;   
 
-        $instance = $proxmox->qemuStop($node, $vmid, array(['overrule-shutdown' => true]));
+        $proxmox->qemuStop($node, $vmid, array(['overrule-shutdown' => true]));
 
         return;
 
@@ -171,7 +194,7 @@ class ProxmoxAuthService
 
         $proxmox = new Nodes;   
 
-        $instance = $proxmox->qemuShutdown($node, $vmid);
+        $proxmox->qemuShutdown($node, $vmid);
 
         return;
 
@@ -184,7 +207,7 @@ class ProxmoxAuthService
 
         $proxmox = new Nodes;
 
-        $instance = $proxmox->lxcStart($node, $vmid);
+        $proxmox->lxcStart($node, $vmid);
 
         return;
 
@@ -197,7 +220,7 @@ class ProxmoxAuthService
 
         $proxmox = new Nodes;
 
-        $instance = $proxmox->lxcStop($node, $vmid, array(['overrule-shutdown' => true]));
+        $proxmox->lxcStop($node, $vmid, array(['overrule-shutdown' => true]));
 
         return;
 
@@ -210,7 +233,7 @@ class ProxmoxAuthService
 
         $proxmox = new Nodes;
 
-        $instance = $proxmox->lxcShutdown($node, $vmid);
+        $proxmox->lxcShutdown($node, $vmid);
 
         return;
 

@@ -30,4 +30,9 @@ class Pool extends Model
 
         return $this->pools;
     }
+
+    public function getPoolForInstance(ProxmoxAuthService $proxmox, $vmid)
+    {
+        dd($vmid);
+    }
 }
