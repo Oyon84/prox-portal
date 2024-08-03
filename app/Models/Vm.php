@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Services\ProxmoxAuthService;
 use App\Models\Node;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Vm extends Model
 {
@@ -16,6 +17,28 @@ class Vm extends Model
     public function __construct()
     {
         $this->nodes = new Node;
+    }
+
+    // Eloquent relationships
+    
+    public function node(): BelongsTo
+    {
+        return $this->belongsTo(Node::class);
+    }
+
+    public function owner(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'owner_id', 'id');
+    }
+
+    public function creator(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'creator_id', 'id');
+    }
+
+    public function pool(): BelongsTo
+    {
+        return $this->belongsTo(Pool::class);
     }
 
     public function getVm($vmid)

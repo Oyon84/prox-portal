@@ -22,14 +22,14 @@ new class extends Component {
     public $allLxcs = [];
     public $taskData = [];
 
-    public function mount(ProxmoxAuthService $proxmox, Vm $vm, Lxc $lxc, Node $node)
+    public function mount(ProxmoxAuthService $proxmox, Vm $vm, Lxc $lxc, Node $node, Task $task)
     {        
         $this->proxmox = $proxmox->authenticate(Auth::user()->pveUsername, decrypt(Session::get('pve_password')),'pve');
         $this->storedNodes = $node->where('available', 1)->get();
         $this->nodes = $node->getAllNodes($proxmox);
         $this->allVms = $vm->getAllVms($proxmox);
         $this->allLxcs = $lxc->getAllLxcs($proxmox);
-        $this->tasks = $this->getTasks($proxmox)->data;
+        $this->tasks = $task->getAllTasks($proxmox);
     }
 
     protected function initializeProxmoxInstance(ProxmoxAuthService $proxmox){
@@ -80,13 +80,6 @@ new class extends Component {
         return date("F j, Y, g:i a", $epoch);
     }
 
-    public function getTasks($proxmoxAuthInstance)
-    {
-        $tasks = $proxmoxAuthInstance->getCurrentTasks();
-
-        return $tasks;
-    }
-
     public function storeTasks()
     {   
         $tasks = new Task;
@@ -100,7 +93,7 @@ new class extends Component {
 
         return $this->storedTask = $tasks->getTaskByUid($uid);
     }
-    
+
 }; ?>
 <div>
     <div>

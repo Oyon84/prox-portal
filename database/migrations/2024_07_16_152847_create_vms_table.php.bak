@@ -1,6 +1,8 @@
 <?php
 
 use App\Models\User;
+use App\Models\Node;
+use App\Models\Pool;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -21,14 +23,15 @@ return new class extends Migration
 
         Schema::create('vms', function (Blueprint $table) {
             $table->id();                                                                   // Laravel ID for relationships with other objects
-            $table->foreignIdFor(model: User::class, column: 'Owner')->constrained();       // Owner of the VM, user class object
-            $table->foreignIdFor(model: User::class, column: 'Creator')->constrained();     // Creator of the VM, user class object
+            $table->foreignIdFor(model: User::class, column: 'owner_id')->constrained();    // Owner of the VM, user class object
+            $table->foreignIdFor(model: User::class, column: 'creator_id')->constrained();  // Creator of the VM, user class object
             $table->integer('vmid');                                                        // Proxmox VMID of the VM
             $table->integer('cpu');                                                         // Number of CPU's
             $table->integer('memory');                                                      // Amount of memory in bytes
             $table->string('name');                                                         // Name of the VM
             $table->string('description');                                                  // Notes in proxmox
-            $table->foreignIdFor('node');                                                   // Node the VM is running on, one to many relationship
+            $table->foreignIdFor(model: Node::class, column: 'node_id');                    // Node the VM is running on, one to many relationship
+            $table->foreignIdFor(model: Pool::class, column: 'pool_id');                    // Resource pool the VM is in
             $table->boolean('running');                                                     // Indication if the VM is running or not
             $table->boolean('agent_enabled');                                               // Indication if qemu agent is enabled or not (does not indicate OS level agent)
             $table->string('pool');                                                         // Resource pool

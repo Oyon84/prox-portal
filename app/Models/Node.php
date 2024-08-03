@@ -13,9 +13,16 @@ class Node extends Model
 
     protected $guarded = [];
 
+    // Eloquent relationships
+
     public function tasks(): HasMany
     {
         return $this->hasMany(Task::class);
+    }
+
+    public function vms(): HasMany
+    {
+        return $this->hasMany(Vm::class);
     }
 
     public function getAllNodes(ProxmoxAuthService $proxmox)

@@ -35,9 +35,21 @@ class User extends Authenticatable implements MustVerifyEmail
         'remember_token',
     ];
 
+    // Eloquent relationships
+
     public function tasks(): HasMany
     {
         return $this->hasMany(Task::class);
+    }
+
+    public function createdVms(): HasMany
+    {
+        return $this->hasMany(Vm::class, 'creator_id', 'id');
+    }
+
+    public function ownedVms(): HasMany
+    {
+        return $this->hasMany(Vm::class, 'owner_id', 'id');
     }
 
     /**

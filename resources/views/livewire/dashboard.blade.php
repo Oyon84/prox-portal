@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Session;
 use App\Models\Node;
 use App\Models\Lxc;
 use App\Models\Vm;
+use App\Models\Pool;
 
 new class extends Component 
 {    
@@ -16,18 +17,22 @@ new class extends Component
     public $nodes;
     public $vm;
     public $lxc;
+    public $pool;
+
     public $instanceData = [];
     public $allVms = [];
     public $allLxcs = [];
     public $pools = [];
 
     // Dependency injection via mount method
-    public function mount(ProxmoxAuthService $proxmox, Node $node, Vm $vm, Lxc $lxc)
+    public function mount(ProxmoxAuthService $proxmox, Node $node, Vm $vm, Lxc $lxc, Pool $pool)
     {        
         $this->nodeCheck = $node->first() ? true : false;
         $this->nodes = $node;
         $this->vm = $vm;
         $this->lxc = $lxc;
+        $this->pool = $pool;
+
         $this->pveUsername = Auth::user()->pveUsername;
         $this->initializeProxmox($proxmox, $node);
     }
@@ -49,7 +54,7 @@ new class extends Component
         $this->nodes = $node->getAllNodes($this->proxmox);
 
         // Fetch Pool data
-        $this->pools = $this->getPools();
+        $this->pools = $this->pool->getPools($this->proxmox);
 
         // Fetch VM and LXC data
         $this->allVms = $this->vm->getAllVms($this->proxmox);
@@ -174,21 +179,6 @@ new class extends Component
         $seconds = $seconds %60;
 
         return $hours > 0 ? "$hours hours, $minutes minutes" : ($minutes > 0 ? "$minutes minutes, $seconds seconds" : "$seconds seconds");
-    }
-
-    public function getPools()
-    {
-        $returnData = [];
-        
-        $pools = $this->proxmox->request('/pools');
-
-        foreach ($pools->data as $key => $pool) {
-
-            array_push($returnData, $pool);
-
-        }
-
-        return $returnData;
     }
 
     public function getInstancePool($vmid)

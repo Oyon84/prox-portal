@@ -215,11 +215,4 @@ class ProxmoxAuthService
         return;
 
     }
-
-    public function getCurrentTasks()
-    {
-        $proxmox = new Request;
-
-        return $proxmox->Request('/cluster/tasks');
-    }
 }
