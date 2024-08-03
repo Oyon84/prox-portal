@@ -20,6 +20,13 @@ In the first phase I aim to complete a dashboard solution before working on depl
 - Create and delete resources (vm's and containers)
 - Membership management resource pools
 
+## Screenshots
+<details>
+    <summary><i>Screenshot of the dashboard interface, light and darkmode</i>i></summary><br>
+    ![Screenshot Light Mode](https://github.com/user-attachments/assets/a7bdab03-44a2-49f2-83eb-ef3facf3e252)<br>
+    ![Screenshot Dark Mode](https://github.com/user-attachments/assets/d49dda65-49b7-47e1-96d7-e22e8bbc1a02)
+</details>
+
 ## Features so far
 
 - Dual authentication, Laravel Session authentication followed by PVE authentication over API.
